@@ -1,14 +1,4 @@
 var InputField = React.createClass({
-  getInitialState: function () {
-    return {name: this.props.initialName};
-  },
-  onChange: function (event) {
-    if (this.state.name !== event.target.value) {
-      this.setState({
-          name: event.target.value
-      });
-    }
-  },
   render: function() {
     return(
       <div className="row input-field">
@@ -16,10 +6,20 @@ var InputField = React.createClass({
           <h3>{this.props.InputLabel}</h3>
         </div>
         <div className="col-lg-2 col-md-2">
-          <p>Hello {this.state.name}</p>
-          <input value={this.state.name} onChange={this.onChange} />
+          <input/>
         </div>
       </div>
+    );
+  }
+});
+
+var BookItem = React.createClass({  
+  render: function() {
+    return(
+      <tr>
+        <td>{this.props.title}</td>
+        <td>{this.props.description}</td>
+      </tr>
     );
   }
 });
@@ -27,23 +27,38 @@ var InputField = React.createClass({
 var BookList = React.createClass({
   getInitialState: function() {
     return{
-      bookList: ''
+      dataList: []
     };
   },
   componentDidMount: function(){
-    $.ajax({
-      url: "http://rest-service.guides.spring.io/greeting"
-    }).then(function(data) {
+    $.post("/api/book", function(result) {
+      // var BookList = result[0];
+      // console.log(BookList);
+      if (this.isMounted()) {
         this.setState({
-            bookList: 'Hi'
+          dataList: result
         });
-    }
-  )},
+      }
+    }.bind(this));
+  },
   render: function() {
+    var items = this.state.dataList.map(function (onebook){
+      return(
+        <BookItem title={onebook.title} description={onebook.description} />
+      );
+    });
     return(
       <div>
-        <h2>Hello World</h2>
-        <p>{this.props.bookList}</p>
+        <h1>Book List</h1>
+        <table className="table table-striped table-hover">
+          <tbody>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+            </tr>
+            {items}
+          </tbody>
+        </table>
       </div>
     );
   }

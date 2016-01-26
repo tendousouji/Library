@@ -19,3 +19,8 @@ h3 {
   height: 28px;
   width: 300px;
 }
+
+.data-output {
+  font-weight: bold;
+  color: red;
+}
